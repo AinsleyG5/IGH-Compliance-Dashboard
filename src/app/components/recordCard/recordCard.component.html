@@ -1,0 +1,161 @@
+<div class="header">
+  <h3>
+    You have searched on {{ entityIds.length }} candidates
+  </h3>
+</div>
+
+<div class="buttons-container">
+  <button theme="primary" (click)="close()">Search Again</button>
+  <button theme="primary" color="success" icon="check" (click)="randomDataRequest()">Save</button>
+</div>
+<br>
+<br>
+<div *ngIf="!connected && !loading" class="error-container">
+  <i class="bhi-inactive"></i>
+  <h2 class="details">Cannot connect to Bullhorn.</h2>
+  <h3 class="details">This app can only be run inside of Bullhorn as a Custom Card on a Record. Please contact your admin if this is in error.</h3>
+</div>
+<div *ngIf="connected" class="custom-card">
+  <div *ngIf="loading" class="loading-container">
+    <novo-loading></novo-loading>
+  </div>
+  <div *ngIf="!loading" class="content">
+    <div *ngIf="errorMessage" class="error-container">
+      <i class="bhi-caution"></i>
+      <h2 class="details">{{errorMessage}}</h2>
+      <h3 class="details">{{errorDetails}}</h3>
+    </div>
+    <div *ngIf="!errorMessage" class="card-content">
+      <!-- <div class="entityIDs">
+        {{ entityIds }}
+      </div> -->
+
+      <div *ngIf="!pieDelay" class="container-pies">
+
+        <div class="doughnut-chart-container">
+          <app-doughnut-chart [probability]="scoreBackground" description="Background Check"></app-doughnut-chart>
+        </div>
+
+        <div class="doughnut-chart-container">
+          <app-doughnut-chart [probability]="scoreDrug" description="Drug Check"></app-doughnut-chart>
+        </div>
+  
+        <div class="doughnut-chart-container">
+          <app-doughnut-chart [probability]="scoreOnboarding" description="Onboarding Documents"></app-doughnut-chart>
+        </div>
+
+        <div class="doughnut-chart-container">
+          <app-doughnut-chart [probability]="scoreRequirements" description="Credential Requirements"></app-doughnut-chart>
+        </div>
+
+        <div class="doughnut-chart-container">
+          <app-doughnut-chart [probability]="scoreReadiness" description="Overall Readiness"></app-doughnut-chart>
+        </div>
+
+      </div>
+
+      <!-- <div class="details-button-container">
+        <button (click)="toggleDetails()" *ngIf="!this.showDetails"
+                icon="expand" theme="secondary">Why This Score?
+        </button>
+        <button (click)="toggleDetails()" *ngIf="this.showDetails"
+                icon="collapse" theme="secondary">Why This Score?
+        </button>
+      </div> -->
+
+      <div class="details">
+
+        <novo-expansion-panel [disabled]="isDisabled">
+          <novo-expansion-panel-header>
+            <novo-panel-title>
+              <div class="panel-header">
+                <i class="bhi-candidate"></i>
+                <label>Candidates to complete background checks ({{ backgroundRemaining }})</label>
+              </div>
+            </novo-panel-title>
+          </novo-expansion-panel-header>
+            <ng-template matExpansionPanelContent>
+              <div fxLayout="column" fxLayoutAlign="space-between start" style="width:100%; padding: 0 10px;">
+
+                  <app-data-table [someData]='dataToSend' class="fullwidth"></app-data-table>
+
+              </div>
+            </ng-template>
+        </novo-expansion-panel>
+
+        <novo-expansion-panel [disabled]="isDisabled">
+          <novo-expansion-panel-header>
+            <novo-panel-title>
+              <div class="panel-header">
+                <i class="bhi-candidate"></i>
+                <label>Candidates to complete drug checks ({{ drugRemaining }})</label>
+              </div>
+            </novo-panel-title>
+          </novo-expansion-panel-header>
+            <ng-template matExpansionPanelContent>
+              <div fxLayout="column" fxLayoutAlign="space-between start" style="width:100%; padding: 0 10px;">
+
+                  <app-drug-check-table [someDataDrug]='dataToSendDrug' class="fullwidth"></app-drug-check-table>
+
+              </div>
+            </ng-template>
+        </novo-expansion-panel>
+
+        <novo-expansion-panel [disabled]="isDisabled">
+          <novo-expansion-panel-header>
+            <novo-panel-title>
+              <div class="panel-header">
+                <i class="bhi-candidate"></i>
+                <label>Candidates to complete onboarding documentation ({{ dataToSendOnb.length }})</label>
+              </div>
+            </novo-panel-title>
+          </novo-expansion-panel-header>
+            <ng-template matExpansionPanelContent>
+              <div fxLayout="column" fxLayoutAlign="space-between start" style="width:100%; padding: 0 10px;">
+
+                  <app-onb-check-table [someDataOnb]='dataToSendOnb' class="fullwidth"></app-onb-check-table>
+
+              </div>
+            </ng-template>
+        </novo-expansion-panel>
+
+        <novo-expansion-panel [disabled]="isDisabled">
+          <novo-expansion-panel-header>
+            <novo-panel-title>
+              <div class="panel-header">
+                <i class="bhi-candidate"></i>
+                <label>Candidates to complete Requirements ({{ dataToSendCred.length }})</label>
+              </div>
+            </novo-panel-title>
+          </novo-expansion-panel-header>
+            <ng-template matExpansionPanelContent>
+              <div fxLayout="column" fxLayoutAlign="space-between start" style="width:100%; padding: 0 10px;">
+
+                  <app-credential-check-table [someDataCred]='dataToSendCred' class="fullwidth"></app-credential-check-table>
+
+              </div>
+            </ng-template>
+        </novo-expansion-panel>
+
+        <novo-expansion-panel [disabled]="isDisabled">
+          <novo-expansion-panel-header>
+            <novo-panel-title>
+              <div class="panel-header">
+                <i class="bhi-candidate"></i>
+                <label>Candidates that are yet to complete full compliance ({{ dataToSendReady.length }})</label>
+              </div>
+            </novo-panel-title>
+          </novo-expansion-panel-header>
+            <ng-template matExpansionPanelContent>
+              <div fxLayout="column" fxLayoutAlign="space-between start" style="width:100%; padding: 0 10px;">
+
+                  <app-ready-check-table [someDataReady]='dataToSendReady' class="fullwidth"></app-ready-check-table>
+
+              </div>
+            </ng-template>
+        </novo-expansion-panel>
+       
+      </div>
+    </div>
+  </div>
+</div>

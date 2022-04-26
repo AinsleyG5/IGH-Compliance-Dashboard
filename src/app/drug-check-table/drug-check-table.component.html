@@ -1,0 +1,15 @@
+<div *ngIf="!loading && foundResults && someDataDrug">
+  <novo-data-table [dataTableService]="basicService"
+                  [columns]="sharedColumns"
+                  [allowMultipleFilters]="true"
+                  [hideGlobalSearch]="!globalSearchEnabled"
+                  [displayedColumns]="sharedDisplayColumns"
+                  [paginationOptions]="sharedPaginationOptions">
+    <ng-template novoTemplate="custom"
+                let-row
+                let-col="col">
+      <!-- <b>CUSTOM</b> {{ row.name }}
+      <b>CUSTOM</b> -->
+    </ng-template>
+  </novo-data-table>
+</div>
